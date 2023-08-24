@@ -19,7 +19,9 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    articles = relationship("Article", back_populates="author")
+    articles = relationship(
+        "Article", back_populates="author", cascade="all, delete-orphan"
+    )
 
 
 class Article(Base):
@@ -29,8 +31,10 @@ class Article(Base):
     title = Column(String, index=True)
     content = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
-    author_id = Column(Integer, ForeignKey("users.id"))
-    author = relationship("User", back_populates="articles")
+    author_id = Column(String, ForeignKey("users.id"))
+    author = relationship(
+        "User", back_populates="articles", cascade="all, delete-orphan"
+    )
 
 
 Base.metadata.create_all(bind=engine)

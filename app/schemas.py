@@ -23,7 +23,7 @@ class UserIn(UserBase):
 
 
 class UserInDBBase(UserBase):
-    id: int
+    id: str
 
     class Config:
         orm_mode = True
