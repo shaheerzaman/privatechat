@@ -1,4 +1,4 @@
-from models import Document
+from models import Document, User
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -46,3 +46,19 @@ async def delete(async_session: AsyncSession, doc: Document):
     async with async_session() as session:
         await session.delete(doc)
         await session.commit()
+
+
+async def get_user_documents(async_session: AsyncSession, username: str) -> list[str]:
+    async with async_session() as session:
+        statement = (
+            select(User)
+            .options(selectinload(User.documents))
+            .filter(User.username == username)
+        )
+
+        result = await session.execute(statement)
+        user = result.scalars().one()
+        print(user)
+        doc_ids: list[str] = [doc.id for doc in user.documents]
+        print(doc_ids)
+        return doc_ids
